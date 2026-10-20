@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>Ratatoskr</Name>
+  <Repository>ghcr.io/magnuspihl/ratatoskr:latest</Repository>
+  <Registry>https://github.com/magnuspihl/Ratatoskr/pkgs/container/ratatoskr</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/magnuspihl/Ratatoskr/issues</Support>
+  <Project>https://github.com/magnuspihl/Ratatoskr</Project>
+  <Overview>Ratatoskr is a self-hosted webmail client for any IMAP/SMTP account. One container, configured by environment variables, with data in SQLite under /data. Features: unified inbox, conversations, Web Push notifications and PWA, snooze, and dark mode. Every email is treated as hostile: server-side sanitising, sandboxed rendering, and remote images are proxied.
+
+REQUIRES HTTPS through a reverse proxy (SWAG, Nginx Proxy Manager, Traefik, Caddy) for push notifications and installing it as an app. WebSockets on /api/ws must be proxied. Set the Base URL to the public https address and keep Trust Proxy enabled.</Overview>
+  <Category>Productivity: Network:Web</Category>
+  <WebUI>http://[IP]:[PORT:8080]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/magnuspihl/UnraidTemplates/main/templates/ratatoskr.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/magnuspihl/Ratatoskr/main/web/public/icons/icon-512.png</Icon>
+  <License>AGPL-3.0</License>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="WebUI Port" Target="8080" Default="8080" Mode="tcp" Description="Web interface port." Type="Port" Display="always" Required="true" Mask="false">8080</Config>
+  <Config Name="AppData" Target="/data" Default="/mnt/user/appdata/ratatoskr" Mode="rw" Description="Holds ratatoskr.db (users, accounts, settings) and cache.db (mail cache)." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/ratatoskr</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User ID the server runs as and that owns /data. The entrypoint chowns /data and drops privileges. Image default is 1000; Unraid uses 99." Type="Variable" Display="always" Required="false" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group ID the server runs as and that owns /data. Image default is 1000; Unraid uses 100." Type="Variable" Display="always" Required="false" Mask="false">100</Config>
+  <Config Name="UMASK" Target="UMASK" Default="" Mode="" Description="Optional umask for files the server creates, e.g. 022." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Base URL" Target="RATATOSKR_BASE_URL" Default="" Mode="" Description="Public https URL users reach Ratatoskr at, e.g. https://mail.example.com. Used for the OIDC redirect URI, the cookie Secure flag and the WebSocket origin check." Type="Variable" Display="always" Required="true" Mask="false"></Config>
+  <Config Name="Secret Key" Target="RATATOSKR_SECRET_KEY" Default="" Mode="" Description="Master secret, at least 32 characters. Generate one with: openssl rand -base64 48. WARNING: changing it later makes stored mail account passwords unreadable." Type="Variable" Display="always" Required="true" Mask="true"></Config>
+  <Config Name="Trust Proxy" Target="RATATOSKR_TRUST_PROXY" Default="true" Mode="" Description="Trust X-Forwarded-* headers. Keep true when running behind a reverse proxy." Type="Variable" Display="always" Required="false" Mask="false">true</Config>
+  <Config Name="Password Login" Target="RATATOSKR_PASSWORD_LOGIN" Default="" Mode="" Description="Optional. Enable username/password login (true/false). Leave empty for the default: true without OIDC, false with OIDC." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Registration" Target="RATATOSKR_REGISTRATION" Default="first" Mode="" Description="Who may create a password account: open, first (first user of an empty instance only) or closed." Type="Variable" Display="always" Required="false" Mask="false">first</Config>
+  <Config Name="OIDC Issuer URL" Target="OIDC_ISSUER_URL" Default="" Mode="" Description="Optional OIDC. Issuer URL; the discovery document is read from it. Register ${RATATOSKR_BASE_URL}/auth/callback as the redirect URI with your provider." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="OIDC Client ID" Target="OIDC_CLIENT_ID" Default="" Mode="" Description="Optional OIDC client ID." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="OIDC Client Secret" Target="OIDC_CLIENT_SECRET" Default="" Mode="" Description="Optional OIDC client secret (confidential clients)." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="OIDC Label" Target="OIDC_LABEL" Default="" Mode="" Description="Optional. Provider name shown on the login button. Empty uses the default (Single sign-on)." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="OIDC Scopes" Target="OIDC_SCOPES" Default="openid email profile" Mode="" Description="Scopes requested from the OIDC provider." Type="Variable" Display="advanced" Required="false" Mask="false">openid email profile</Config>
+  <Config Name="Block Private Mail Hosts" Target="RATATOSKR_BLOCK_PRIVATE_MAIL_HOSTS" Default="false" Mode="" Description="Refuse IMAP/SMTP hosts resolving to private/internal addresses. Leave false when your mail server is on the LAN." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Default IMAP Host" Target="RATATOSKR_DEFAULT_IMAP_HOST" Default="" Mode="" Description="Optional. Pre-fills the IMAP host in the Add account form. Accepts {username}, {email} and {name} tokens." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default SMTP Host" Target="RATATOSKR_DEFAULT_SMTP_HOST" Default="" Mode="" Description="Optional. Pre-fills the SMTP host in the Add account form. Accepts {username}, {email} and {name} tokens." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default IMAP Security" Target="RATATOSKR_DEFAULT_IMAP_SECURITY" Default="" Mode="" Description="Optional. tls, starttls or none (app default: tls)." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default SMTP Security" Target="RATATOSKR_DEFAULT_SMTP_SECURITY" Default="" Mode="" Description="Optional. tls, starttls or none (app default: tls)." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default IMAP Port" Target="RATATOSKR_DEFAULT_IMAP_PORT" Default="" Mode="" Description="Optional. Pre-fills the IMAP port. Accepts the {username}, {email} and {name} tokens." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default SMTP Port" Target="RATATOSKR_DEFAULT_SMTP_PORT" Default="" Mode="" Description="Optional. Pre-fills the SMTP port. Accepts the {username}, {email} and {name} tokens." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default Mail Username" Target="RATATOSKR_DEFAULT_MAIL_USERNAME" Default="" Mode="" Description="Optional. Pre-fills the mail username. Accepts {username}, {email} and {name} tokens." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default Email" Target="RATATOSKR_DEFAULT_EMAIL" Default="" Mode="" Description="Optional. Pre-fills the email address, e.g. {username}@example.com. Accepts {username}, {email} and {name} tokens." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default Display Name" Target="RATATOSKR_DEFAULT_DISPLAY_NAME" Default="" Mode="" Description="Optional. Pre-fills the sender display name. Accepts {username}, {email} and {name} tokens." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Default Account Label" Target="RATATOSKR_DEFAULT_ACCOUNT_LABEL" Default="" Mode="" Description="Optional. Pre-fills the account label. Accepts {username}, {email} and {name} tokens." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Cache" Target="RATATOSKR_CACHE" Default="true" Mode="" Description="Keep a local copy of each account's newest INBOX and Sent mail. false always asks the mail server." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Cache Messages" Target="RATATOSKR_CACHE_MESSAGES" Default="2000" Mode="" Description="Newest messages kept per cached folder (50-100000)." Type="Variable" Display="advanced" Required="false" Mask="false">2000</Config>
+  <Config Name="Cache Max Body MB" Target="RATATOSKR_CACHE_MAX_BODY_MB" Default="1" Mode="" Description="Largest message whose content is cached. 0 keeps no message content." Type="Variable" Display="advanced" Required="false" Mask="false">1</Config>
+  <Config Name="Cache Account MB" Target="RATATOSKR_CACHE_ACCOUNT_MB" Default="200" Mode="" Description="Message content kept per account; least recently read is removed first." Type="Variable" Display="advanced" Required="false" Mask="false">200</Config>
+  <Config Name="Max Message MB" Target="RATATOSKR_MAX_MESSAGE_MB" Default="50" Mode="" Description="Largest message the server downloads for display." Type="Variable" Display="advanced" Required="false" Mask="false">50</Config>
+  <Config Name="Max Upload MB" Target="RATATOSKR_MAX_UPLOAD_MB" Default="25" Mode="" Description="Largest total attachment upload when composing." Type="Variable" Display="advanced" Required="false" Mask="false">25</Config>
+  <Config Name="IMAP Idle Timeout" Target="RATATOSKR_IMAP_IDLE_TIMEOUT" Default="300" Mode="" Description="Seconds before an unused pooled IMAP connection is closed." Type="Variable" Display="advanced" Required="false" Mask="false">300</Config>
+  <Config Name="VAPID Subject" Target="RATATOSKR_VAPID_SUBJECT" Default="" Mode="" Description="Optional. Contact sent to push services. Empty uses the base URL if https, else mailto:postmaster@host." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Log Level" Target="LOG_LEVEL" Default="info" Mode="" Description="One of fatal, error, warn, info, debug, trace." Type="Variable" Display="advanced" Required="false" Mask="false">info</Config>
+</Container>
