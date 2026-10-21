@@ -20,4 +20,8 @@ Docker application templates for [Unraid](https://unraid.net), compatible with C
 
 ## Using the templates in Unraid
 
-Add this repo's URL under *Docker > Template Repositories* (or submit it to Community Applications).
+Pick whichever works on your Unraid version:
+
+- **Template Repositories field:** On the *Docker* tab, switch on **Advanced View** (top right), then click **Add Container**. The *Template Repositories* box is on that page. Some releases show it under *Settings > Docker* instead. Add this repo's URL there and click *Save*. The field is not present on every release.
+- **Manual install (always works):** Copy the XML you want from `templates/` to `/boot/config/plugins/dockerMan/templates-user/` on the Unraid flash drive. It then appears under *Docker > Add Container > Template* in the *User templates* list.
+- **Community Applications:** Submit the repo to the CA team via the [Unraid forum](https://forums.unraid.net/forum/38-docker-containers/) so the apps show up in the Apps tab.
